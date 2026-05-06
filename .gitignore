@@ -39,3 +39,7 @@ Thumbs.db
 
 # Environment
 .env
+
+# Project documentation (kept locally, not in repo)
+文档/
+
