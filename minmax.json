@@ -1,0 +1,75 @@
+{
+  "_comment": "go-agent 全局配置文件。环境变量优先级高于此文件。",
+  "providers": {
+    "openai": {
+      "api_key": "${OPENAI_API_KEY}",
+      "base_url": "https://api.openai.com/v1",
+      "model": "gpt-4o-mini",
+      "embed_model": "text-embedding-3-small"
+    },
+    "minimax": {
+      "api_key": "${MINIMAX_API_KEY}",
+      "base_url": "https://api.minimax.chat/v1",
+      "model": "abab6.5-chat",
+      "embed_model": "embo-01"
+    },
+    "stepfun": {
+      "api_key": "${STEP_API_KEY}",
+      "base_url": "https://api.stepfun.com/v1",
+      "model": "step-3.5-flash",
+      "embed_model": "step-1-embedding"
+    },
+    "openrouter": {
+      "api_key": "${OPENROUTER_API_KEY}",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "openai/gpt-4o-mini",
+      "embed_model": ""
+    }
+  },
+  "default_provider": "openai",
+  "agent": {
+    "max_iterations": 5,
+    "skills_dir": "./skills-real",
+    "memory_level": 2,
+    "use_plan": false,
+    "rules_dir": ".agent/rules",
+    "mcp_config": ".agent/mcp.json"
+  },
+  "memory": {
+    "l1": {
+      "file": "memory_l1.jsonl",
+      "max_entries": 200,
+      "top_k": 10
+    },
+    "l2": {
+      "file": "memory_l2.jsonl",
+      "top_k": 5,
+      "embed_model": "text-embedding-3-small"
+    },
+    "l3": {
+      "file": "memory_l3.jsonl",
+      "reflection_file": "memory_reflections.jsonl",
+      "top_k": 5,
+      "alpha": 0.5,
+      "beta": 0.3,
+      "gamma": 0.2,
+      "half_life_days": 30.0,
+      "reflection_threshold": 10
+    },
+    "l4": {
+      "db_path": "memory_l4.db",
+      "max_entities_per_query": 5,
+      "max_facts_per_response": 15
+    },
+    "l5": {
+      "file": "memory_l5.jsonl",
+      "compress_every": 5,
+      "top_k": 5
+    }
+  },
+  "tools": {
+    "bash_timeout_seconds": 30,
+    "file_read_max_lines": 1000,
+    "glob_max_results": 100
+  }
+}
