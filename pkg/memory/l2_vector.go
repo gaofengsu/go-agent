@@ -6,12 +6,16 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/sanbuphy/go-agent/pkg/llm"
 )
 
-const l2File = "memory_l2.jsonl"
+const (
+	l2File         = "memory_l2.jsonl"
+	similarityEpsilon = 1e-8
+)
 
 // L2VectorMemory uses OpenAI embeddings + cosine similarity.
 type L2VectorMemory struct {
@@ -81,14 +85,9 @@ func (m *L2VectorMemory) Search(ctx context.Context, query string, topK int) ([]
 		sim := cosineSimilarity(queryEmb[0], emb)
 		scoredList = append(scoredList, scored{entry: mem, score: sim})
 	}
-	// sort desc
-	for i := 0; i < len(scoredList); i++ {
-		for j := i + 1; j < len(scoredList); j++ {
-			if scoredList[j].score > scoredList[i].score {
-				scoredList[i], scoredList[j] = scoredList[j], scoredList[i]
-			}
-		}
-	}
+	sort.Slice(scoredList, func(i, j int) bool {
+		return scoredList[i].score > scoredList[j].score
+	})
 	var results []Entry
 	for i, s := range scoredList {
 		if i >= topK {
@@ -132,5 +131,5 @@ func cosineSimilarity(a, b []float32) float32 {
 		normA += a[i] * a[i]
 		normB += b[i] * b[i]
 	}
-	return dot / (float32(math.Sqrt(float64(normA*normB))) + 1e-8)
+	return dot / (float32(math.Sqrt(float64(normA*normB))) + similarityEpsilon)
 }

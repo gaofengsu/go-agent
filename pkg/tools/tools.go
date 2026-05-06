@@ -21,12 +21,10 @@ type Registry struct {
 	tools map[string]Tool
 }
 
-// NewRegistry creates a registry with base tools.
+// NewRegistry creates a registry with claudecode-style rich tools.
 func NewRegistry(client llm.LLMClient) *Registry {
 	r := &Registry{tools: make(map[string]Tool)}
-	r.Register(&BashTool{})
-	r.Register(&ReadFileTool{})
-	r.Register(&WriteFileTool{})
+	r.Register(&BashTool2{})
 	r.Register(&ReadTool{})
 	r.Register(&WriteTool{})
 	r.Register(&EditTool{})
@@ -42,11 +40,6 @@ func NewBaseRegistry() *Registry {
 	r.Register(&BashTool{})
 	r.Register(&ReadFileTool{})
 	r.Register(&WriteFileTool{})
-	r.Register(&ReadTool{})
-	r.Register(&WriteTool{})
-	r.Register(&EditTool{})
-	r.Register(&GlobTool{})
-	r.Register(&GrepTool{})
 	return r
 }
 

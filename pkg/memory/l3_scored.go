@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 
@@ -103,14 +104,9 @@ func (m *L3ScoredMemory) Search(ctx context.Context, query string, topK int) ([]
 		scoredList = append(scoredList, scored{entry: mem, score: score})
 		mem["access_count"] = int(mem["access_count"].(float64)) + 1
 	}
-	// sort desc
-	for i := 0; i < len(scoredList); i++ {
-		for j := i + 1; j < len(scoredList); j++ {
-			if scoredList[j].score > scoredList[i].score {
-				scoredList[i], scoredList[j] = scoredList[j], scoredList[i]
-			}
-		}
-	}
+	sort.Slice(scoredList, func(i, j int) bool {
+		return scoredList[i].score > scoredList[j].score
+	})
 	var results []Entry
 	for i, s := range scoredList {
 		if i >= topK {

@@ -9,6 +9,8 @@ import (
 	"github.com/sanbuphy/go-agent/pkg/llm"
 )
 
+const defaultBashTimeout = 30 * time.Second
+
 // BashTool executes shell commands.
 type BashTool struct{}
 
@@ -27,16 +29,16 @@ func (t *BashTool) Schema() llm.ToolSchema {
 }
 
 func (t *BashTool) Execute(ctx context.Context, args map[string]any) (string, error) {
-	cmdStr, _ := args["command"].(string)
-	if cmdStr == "" {
-		return "", fmt.Errorf("missing command")
+	cmdStr, ok := args["command"].(string)
+	if !ok || cmdStr == "" {
+		return "", fmt.Errorf("missing or invalid command argument")
 	}
-	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, defaultBashTimeout)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, "sh", "-c", cmdStr)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return string(out) + "\n" + err.Error(), nil
+		return "", fmt.Errorf("%s: %w", string(out), err)
 	}
 	return string(out), nil
 }

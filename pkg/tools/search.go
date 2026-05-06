@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -29,7 +30,10 @@ func (t *GlobTool) Schema() llm.ToolSchema {
 }
 
 func (t *GlobTool) Execute(ctx context.Context, args map[string]any) (string, error) {
-	pattern, _ := args["pattern"].(string)
+	pattern, ok := args["pattern"].(string)
+	if !ok {
+		return "", fmt.Errorf("invalid pattern argument")
+	}
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		return "", err
@@ -83,7 +87,10 @@ func (t *GrepTool) Schema() llm.ToolSchema {
 }
 
 func (t *GrepTool) Execute(ctx context.Context, args map[string]any) (string, error) {
-	pattern, _ := args["pattern"].(string)
+	pattern, ok1 := args["pattern"].(string)
+	if !ok1 {
+		return "", fmt.Errorf("invalid pattern argument")
+	}
 	path, _ := args["path"].(string)
 	if path == "" {
 		path = "."

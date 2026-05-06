@@ -1,11 +1,11 @@
 package memory
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -81,14 +81,9 @@ func (m *L1FileMemory) Search(ctx context.Context, query string, topK int) ([]En
 			scoredList = append(scoredList, scored{entry: mem, score: score})
 		}
 	}
-	// simple bubble sort by score desc
-	for i := 0; i < len(scoredList); i++ {
-		for j := i + 1; j < len(scoredList); j++ {
-			if scoredList[j].score > scoredList[i].score {
-				scoredList[i], scoredList[j] = scoredList[j], scoredList[i]
-			}
-		}
-	}
+	sort.Slice(scoredList, func(i, j int) bool {
+		return scoredList[i].score > scoredList[j].score
+	})
 	var results []Entry
 	for i, s := range scoredList {
 		if i >= topK {
@@ -122,44 +117,4 @@ If nothing is worth remembering, return [].`, userInput, aiResponse)},
 		return nil, nil
 	}
 	return facts, nil
-}
-
-func appendJSONL(path string, entry map[string]any) error {
-	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	enc := json.NewEncoder(f)
-	return enc.Encode(entry)
-}
-
-func loadJSONL(path string) ([]map[string]any, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	defer f.Close()
-	var out []map[string]any
-	sc := bufio.NewScanner(f)
-	for sc.Scan() {
-		var m map[string]any
-		if err := json.Unmarshal(sc.Bytes(), &m); err == nil {
-			out = append(out, m)
-		}
-	}
-	// keep last 200
-	if len(out) > 200 {
-		out = out[len(out)-200:]
-	}
-	return out, nil
-}
-
-func mapToEntry(m map[string]any) Entry {
-	text, _ := m["text"].(string)
-	ts, _ := m["timestamp"].(string)
-	return Entry{Text: text, Timestamp: ts, Metadata: m}
 }

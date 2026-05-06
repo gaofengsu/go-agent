@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -88,13 +89,9 @@ func (m *L5SummaryMemory) Search(ctx context.Context, query string, topK int) ([
 			scoredList = append(scoredList, scored{entry: mem, score: score})
 		}
 	}
-	for i := 0; i < len(scoredList); i++ {
-		for j := i + 1; j < len(scoredList); j++ {
-			if scoredList[j].score > scoredList[i].score {
-				scoredList[i], scoredList[j] = scoredList[j], scoredList[i]
-			}
-		}
-	}
+	sort.Slice(scoredList, func(i, j int) bool {
+		return scoredList[i].score > scoredList[j].score
+	})
 	var results []Entry
 	for i, s := range scoredList {
 		if i >= topK {

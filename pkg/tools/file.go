@@ -9,6 +9,8 @@ import (
 	"github.com/sanbuphy/go-agent/pkg/llm"
 )
 
+const defaultFilePerm = 0644
+
 // ReadFileTool reads a file (base agent variant).
 type ReadFileTool struct{}
 
@@ -27,7 +29,10 @@ func (t *ReadFileTool) Schema() llm.ToolSchema {
 }
 
 func (t *ReadFileTool) Execute(ctx context.Context, args map[string]any) (string, error) {
-	path, _ := args["path"].(string)
+	path, ok := args["path"].(string)
+	if !ok {
+		return "", fmt.Errorf("invalid path argument")
+	}
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
@@ -53,9 +58,12 @@ func (t *WriteFileTool) Schema() llm.ToolSchema {
 }
 
 func (t *WriteFileTool) Execute(ctx context.Context, args map[string]any) (string, error) {
-	path, _ := args["path"].(string)
-	content, _ := args["content"].(string)
-	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+	path, ok1 := args["path"].(string)
+	content, ok2 := args["content"].(string)
+	if !ok1 || !ok2 {
+		return "", fmt.Errorf("invalid path or content argument")
+	}
+	if err := os.WriteFile(path, []byte(content), defaultFilePerm); err != nil {
 		return "", err
 	}
 	return fmt.Sprintf("Wrote to %s", path), nil
@@ -79,7 +87,10 @@ func (t *ReadTool) Schema() llm.ToolSchema {
 }
 
 func (t *ReadTool) Execute(ctx context.Context, args map[string]any) (string, error) {
-	path, _ := args["path"].(string)
+	path, ok := args["path"].(string)
+	if !ok {
+		return "", fmt.Errorf("invalid path argument")
+	}
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
@@ -143,9 +154,12 @@ func (t *EditTool) Schema() llm.ToolSchema {
 }
 
 func (t *EditTool) Execute(ctx context.Context, args map[string]any) (string, error) {
-	path, _ := args["path"].(string)
-	oldStr, _ := args["old_string"].(string)
-	newStr, _ := args["new_string"].(string)
+	path, ok1 := args["path"].(string)
+	oldStr, ok2 := args["old_string"].(string)
+	newStr, ok3 := args["new_string"].(string)
+	if !ok1 || !ok2 || !ok3 {
+		return "", fmt.Errorf("invalid path, old_string or new_string argument")
+	}
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
@@ -155,7 +169,7 @@ func (t *EditTool) Execute(ctx context.Context, args map[string]any) (string, er
 		return "", fmt.Errorf("old_string must appear exactly once")
 	}
 	newContent := strings.Replace(content, oldStr, newStr, 1)
-	if err := os.WriteFile(path, []byte(newContent), 0644); err != nil {
+	if err := os.WriteFile(path, []byte(newContent), defaultFilePerm); err != nil {
 		return "", err
 	}
 	return fmt.Sprintf("Successfully edited %s", path), nil
