@@ -1,45 +1,37 @@
+
 # Binaries for programs and plugins
+# Build artifacts
+# Dependency directories (remove the comment below to include it)
+# Environment
+# Go workspace file
+# IDE
+# OS
+# Output of the go coverage tool
+# Project documentation (kept locally, not in repo)
+# Runtime memory files
+# Test binary, built with `go test -c`
+# vendor/
+*.dll
+*.dylib
 *.exe
 *.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool
 *.out
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-# Go workspace file
-go.work
-
-# Build artifacts
-go-agent
-
-# Runtime memory files
-agent_memory.md
-memory_*.jsonl
-memory_*.db
-memory_reflections.jsonl
-
-# IDE
+*.so
+*.swo
+*.swp
+*.test
+*~
+.DS_Store
+.env
 .idea/
 .vscode/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
 Thumbs.db
-
-# Environment
-.env
-
-# Project documentation (kept locally, not in repo)
+agent_memory.md
+go-agent
+go.work
+memory_*.db
+memory_*.jsonl
+memory_reflections.jsonl
+run.sh
+run.sh.example
 文档/
-

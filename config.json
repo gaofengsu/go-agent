@@ -8,10 +8,10 @@
       "embed_model": "text-embedding-3-small"
     },
     "minimax": {
-      "api_key": "${MINIMAX_API_KEY}",
-      "base_url": "https://api.minimax.chat/v1",
-      "model": "abab6.5-chat",
-      "embed_model": "embo-01"
+      "api_key": "${OPENAI_API_KEY}",
+      "base_url": "https://api.minimaxi.com/v1",
+      "model": "MiniMax-M2.7",
+      "embed_model": ""
     },
     "stepfun": {
       "api_key": "${STEP_API_KEY}",
@@ -26,7 +26,7 @@
       "embed_model": ""
     }
   },
-  "default_provider": "openai",
+  "default_provider": "minimax",
   "agent": {
     "max_iterations": 5,
     "skills_dir": "./skills-real",
