@@ -225,7 +225,7 @@ r.Register(&MyCustomTool{})
 ```
 go-agent/
 ├── main.go                     # 统一 CLI: go-agent -plan -claudecode
-├── minmax.json                 # 配置: API keys、模型参数、记忆设置
+├── config.json                 # 配置: API keys、模型参数、记忆设置
 ├── go.mod / go.sum
 ├── README.md / README_CN.md
 │

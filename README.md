@@ -226,7 +226,7 @@ The registry auto-generates JSON schemas for OpenAI's `functions` parameter. No 
 ```
 go-agent/
 ├── main.go                     # Unified CLI: go-agent -plan -claudecode
-├── minmax.json                 # Config: API keys, model params, memory settings
+├── config.json                 # Config: API keys, model params, memory settings
 ├── go.mod / go.sum
 ├── README.md / README_CN.md
 │
